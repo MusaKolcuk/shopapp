@@ -1,22 +1,31 @@
 const express = require("express");
-const app = express();      //uygulama olusturma.
-
-const products = [
-    {id: 1, name: "iphone 12", price: 20000},
-    {id: 2, name: "iphone 13", price: 30000},
-    {id: 3, name: "iphone 14", price: 40000},
-];
+const app = express();          //uygulama olusturma.
+const cors = require("cors");
 
 
+const products = require("./routes/products");
+const home = require("./routes/home");
 
-app.get("/", (req, res) => {            //sayfaya get methodu ile istek gonderilir.
-    res.send(products[0]);
-})
+app.use(express.json());             // gelen veriler json olarak okunacak.
 
-app.get("/api/products", (req, res) => {        //gonderilen talep eger /api/products ise butun urun bilgileri getirilir.
-    res.send(products);
-})
+app.use(cors({
+    origin: "*",
+    methods: ["GET"]
+}))
+
+// npm i cors paketi ile bu islemleri ustteki gibi gosterebiliriz. Bu sekilde ugrasmaya gerek kalmaz.
+// app.use((req, res, next) => {
+//     res.setHeader("Access-Control-Allow-Origin","*");
+//     res.setHeader("Access-Control-Allow-Methods","GET");
+//     next();
+
+// })
+
+
+app.use("/api/products", products);
+app.use("/", home);
+
 
 app.listen(3000, () => {
     console.log("listening on port 3000");
-})
+});
